@@ -1,33 +1,53 @@
 package com.example.demo.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "users")  // Переименовали таблицу в "users"
+@Table(name = "users")
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    private String username;
+  private String username;
 
-    public User() {}
+  // Двунаправленная связь: один User имеет один Profile.
+  // Аннотация @JsonManagedReference предотвращает рекурсию при сериализации (с обратной стороны Profile).
+  @OneToOne(mappedBy = "user")
+  @JsonManagedReference
+  private Profile profile;
 
-    public User(String username) {
-        this.username = username;
-    }
+  // Конструктор по умолчанию (обязателен для JPA)
+  public User() {
+  }
 
-    // Геттеры и сеттеры
-    public Long getId() {
-        return id;
-    }
+  // Дополнительный конструктор для удобства
+  public User(String username) {
+    this.username = username;
+  }
 
-    public String getUsername() {
-        return username;
-    }
+  // Геттеры и сеттеры
+  public Long getId() {
+    return id;
+  }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+  public String getUsername() {
+    return username;
+  }
+
+  public void setUsername(String username) {
+    this.username = username;
+  }
+
+  public Profile getProfile() {
+    return profile;
+  }
+
+  public void setProfile(Profile profile) {
+    this.profile = profile;
+  }
 }
+
+
